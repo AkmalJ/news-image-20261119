@@ -1,7 +1,7 @@
 # Sources — The World in One Day, Thursday 19 November 2026
 
 Every story printed on the page, with the outlet(s) it is attributed to.
-All 40 stories happened, or were first reported, on Thursday 19 November
+All 35 stories happened, or were first reported, on Thursday 19 November
 2026.
 
 ## Features
@@ -21,12 +21,12 @@ All 40 stories happened, or were first reported, on Thursday 19 November
 
 ## Mediums
 
-4. **New York · Markets** — Anthropic starts trading on Nasdaq. Its record
-   $81.3bn share sale was priced at $83 on Wednesday; shares opened at
-   $111.50, passing SpaceX's $75bn record. — AP
-5. **Worldwide · Games** — GTA VI goes on sale after 13 years. The midnight
-   launch draws rave reviews; analysts estimate 17.1m pre-orders worth
-   about $1.65bn, on PS5 and Xbox only. — ABC
+4. **New York · Markets** — Anthropic starts trading on Nasdaq. Priced
+   at $83 on Wednesday, its record $81.3bn sale opened at $111.50 —
+   passing SpaceX's $75bn record. — AP
+5. **Worldwide · Games** — GTA VI goes on sale after 13 years. Midnight
+   launch draws rave reviews; analysts put pre-orders at 17.1m worth
+   $1.65bn, PS5 and Xbox only. — ABC
 6. **Crimea · War** — Ukraine hits Crimea bridge again. A third strike in a
    week halts trains to Russia over the Kerch Bridge. — Euronews
 7. **Riyadh · Gulf** — Saudis shoot down Houthi missiles. Debris fell on
@@ -39,8 +39,8 @@ All 40 stories happened, or were first reported, on Thursday 19 November
    Court overturns Han Duck-soo's martial-law conviction and orders a
    retrial. — AP
 10. **Greenland · Security** — Denmark backs Arctic pact with US.
-    Parliament approves the Greenland security deal 109–0, expanding the
-    US presence under Danish sovereignty. — AP
+    Parliament approves Greenland deal 109–0, expanding the US
+    presence under Danish sovereignty. — AP
 11. **Canberra · Economy** — Australia's jobless rate jumps to 4.9%. A
     five-year high: 753,700 people were unemployed in October and the
     dollar slid. — ABS
@@ -92,17 +92,9 @@ All 40 stories happened, or were first reported, on Thursday 19 November
     day. (CBS)
 33. **Wellington** — A court rules that pay-equity cuts broke the rights
     law. (RNZ)
-34. **Tonga** — A drought emergency takes effect across the islands.
-    (RNZ)
-35. **Cook Islands** — Cyclone Xavier weakens to category 4. (RNZ)
-36. **Rome** — Author Corrado Augias dies at 91. (Euronews)
-37. **Zurich** — Two rivals step up to challenge FIFA president
-    Infantino. (ABC)
-38. **Space** — Astronomers watch a red giant star eating a Sun-sized
-    star. (Nature)
-39. **Taiwan** — TSMC tightens its curbs on AI chip sales to China.
+34. **Taiwan** — TSMC tightens its curbs on AI chip sales to China.
     (Reuters)
-40. **Gaza** — Israel says its tank raid past the truce line has
+35. **Gaza** — Israel says its tank raid past the truce line has
     ended. (BBC)
 
 ## Left out as other days' news (see the page's DATE CHECK box)

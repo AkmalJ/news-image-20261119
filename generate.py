@@ -194,26 +194,16 @@ def stamp(img, cx, cy, label, color=RED, size=13, angle=-11):
 # --------------------------------------------------------------------------
 # The day's slate (all stories: Thursday 19 November 2026)
 # --------------------------------------------------------------------------
-TOTAL_STORIES = 40
+TOTAL_STORIES = 35
 
 REGIONS = [
     ("ASIA-PACIFIC", 9, (46, 95, 138)),
-    ("EUROPE", 10, (62, 122, 78)),
+    ("EUROPE", 8, (62, 122, 78)),
     ("MIDDLE EAST", 5, (168, 80, 60)),
     ("AMERICAS", 4, (124, 106, 174)),
     ("AFRICA", 5, (138, 109, 59)),
-    ("OCEANIA", 4, (79, 150, 168)),
-    ("WORLDWIDE", 3, (74, 74, 72)),
-]
-
-UTC_ITEMS = [
-    ("00:00", "AUCKLAND", "GTA VI unlocks"),
-    ("04:42", "RIYADH", "air-raid sirens"),
-    ("08:40", "SEOUL", "exam begins"),
-    ("09:30", "JAKARTA", "law passed"),
-    ("10:00", "THE HAGUE", "genocide ruling"),
-    ("12:30", "SHENZHEN", "three leaders meet"),
-    ("14:30", "NEW YORK", "Anthropic debut"),
+    ("OCEANIA", 2, (79, 150, 168)),
+    ("WORLDWIDE", 2, (74, 74, 72)),
 ]
 
 NUMBERS = [
@@ -230,7 +220,7 @@ FEATURES = [
     {
         "n": 1, "kicker": "SHENZHEN · SUMMIT", "tag": "CONFIRMED",
         "banner": "FIRST US–CHINA–RUSSIA SUMMIT · APEC 2026",
-        "art": "summit", "artfoot": None,
+        "art": "summit", "artfoot": "SHENZHEN · CHINA",
         "headline": "Trump, Xi and Putin hold first three-way summit",
         "dek": ("The US, Chinese and Russian leaders met for 90 minutes "
                 "beside APEC in Shenzhen and issued a “Declaration toward "
@@ -294,91 +284,164 @@ def _flag_ru(cv, x, y, w, h):
 def art_summit(cv, x, y, w, h):
     """Three leaders at one long table, flags behind them (F1)."""
     cv.rect(x, y, w, h, fill=(30, 46, 78))
-    cv.rect(x, y + h * 0.62, w, h * 0.38, fill=(24, 36, 62))
-    fw, fh = w * 0.17, h * 0.34
-    fy = y + h * 0.16
-    xs = [x + w * 0.10, x + w * 0.415, x + w * 0.73]
+    cv.rect(x, y + h * 0.60, w, h * 0.40, fill=(24, 36, 62))
+    # lighter backdrop panel behind the flags
+    cv.rect(x + w * 0.04, y + h * 0.06, w * 0.92, h * 0.54, fill=(37, 59, 97))
+    fw, fh = w * 0.175, h * 0.40
+    fy = y + h * 0.11
+    xs = [x + w * 0.09, x + w * 0.4125, x + w * 0.735]
     for fx, fn in zip(xs, (_flag_us, _flag_cn, _flag_ru)):
-        cv.vline(fx - 2.5, fy - 4, y + h * 0.66, fill=(120, 128, 148), width=1.4)
+        cv.vline(fx - 3, fy - 5, y + h * 0.70, fill=(150, 158, 178), width=1.4)
+        cv.ellipse(fx - 5.4, fy - 10, 4.8, 4.8, fill=(214, 178, 58))
         fn(cv, fx, fy, fw, fh)
         cv.rect(fx, fy, fw, fh, outline=(10, 14, 24), width=0.8)
     # table
-    ty = y + h * 0.70
-    cv.poly([(x + w * 0.05, ty), (x + w * 0.95, ty),
-             (x + w * 0.99, y + h * 0.97), (x + w * 0.01, y + h * 0.97)],
+    ty = y + h * 0.715
+    cv.poly([(x + w * 0.04, ty), (x + w * 0.96, ty),
+             (x + w * 0.995, y + h * 0.985), (x + w * 0.005, y + h * 0.985)],
             fill=(96, 62, 38))
-    cv.hline(x + w * 0.05, x + w * 0.95, ty, fill=(140, 100, 62), width=1.6)
+    cv.hline(x + w * 0.04, x + w * 0.96, ty, fill=(150, 108, 66), width=1.8)
     # leaders
     skin = [(232, 183, 140), (238, 196, 156), (233, 186, 143)]
-    hair = [(206, 172, 96), (30, 30, 32), (168, 160, 148)]
+    hair = [(206, 172, 96), (26, 26, 30), (176, 168, 156)]
     ties = [(178, 34, 52), (150, 30, 30), (36, 52, 120)]
     names = ["TRUMP", "XI", "PUTIN"]
-    nf = F(SANS_B, 7.2)
+    nf = F(SANS_B, 7.4)
+    hw_, hh_ = w * 0.092, h * 0.35
     for i, cxr in enumerate([0.185, 0.50, 0.815]):
         cx = x + w * cxr
-        hy = y + h * 0.47
-        # suit
-        cv.poly([(cx - w * 0.085, ty + 2), (cx - w * 0.062, hy + 13),
-                 (cx + w * 0.062, hy + 13), (cx + w * 0.085, ty + 2)],
+        htop = y + h * 0.27
+        sy0 = y + h * 0.635           # shoulder line
+        # suit torso
+        cv.poly([(cx - w * 0.092, ty + 2), (cx - w * 0.064, sy0),
+                 (cx + w * 0.064, sy0), (cx + w * 0.092, ty + 2)],
                 fill=(22, 24, 30))
-        cv.poly([(cx - 6, hy + 13), (cx + 6, hy + 13), (cx, ty + 2)],
-                fill=(240, 238, 232))
-        cv.poly([(cx - 2.2, hy + 15), (cx + 2.2, hy + 15),
-                 (cx + 1.2, ty - 4), (cx - 1.2, ty - 4)], fill=ties[i])
-        # head + hair (filled half-disc)
-        cv.ellipse(cx - 11.5, hy - 13, 23, 25, fill=skin[i])
-        cv.d.pieslice([_u(cx - 11.5), _u(hy - 13), _u(cx + 11.5),
-                       _u(hy + 12)], 180, 360, fill=hair[i])
-        # name plate
+        # lapels
+        cv.poly([(cx - w * 0.020, sy0), (cx - w * 0.004, sy0 + h * 0.075),
+                 (cx - w * 0.048, sy0 + h * 0.055)], fill=(52, 55, 64))
+        cv.poly([(cx + w * 0.020, sy0), (cx + w * 0.004, sy0 + h * 0.075),
+                 (cx + w * 0.048, sy0 + h * 0.055)], fill=(52, 55, 64))
+        # shirt V + tie
+        cv.poly([(cx - w * 0.020, sy0), (cx + w * 0.020, sy0),
+                 (cx, ty - 1)], fill=(240, 238, 232))
+        cv.poly([(cx - 2.6, sy0 + 1.5), (cx + 2.6, sy0 + 1.5),
+                 (cx + 1.4, ty - 3), (cx - 1.4, ty - 3)], fill=ties[i])
+        # head
+        cv.ellipse(cx - hw_ / 2, htop, hw_, hh_, fill=skin[i])
+        # hair: full cap for Trump/Xi, a shallow cap for Putin
+        if i == 2:
+            cv.d.pieslice([_u(cx - hw_ / 2), _u(htop), _u(cx + hw_ / 2),
+                           _u(htop + hh_)], 192, 348, fill=hair[i])
+        else:
+            cv.d.pieslice([_u(cx - hw_ / 2), _u(htop), _u(cx + hw_ / 2),
+                           _u(htop + hh_)], 180, 360, fill=hair[i])
+        if i == 0:  # Trump's swept fringe
+            cv.poly([(cx - hw_ * 0.52, htop + hh_ * 0.30),
+                     (cx + hw_ * 0.30, htop + hh_ * 0.13),
+                     (cx + hw_ * 0.52, htop + hh_ * 0.30),
+                     (cx + hw_ * 0.52, htop + hh_ * 0.06),
+                     (cx - hw_ * 0.52, htop + hh_ * 0.04)], fill=hair[i])
+        # eyebrows + eyes
+        ey = htop + hh_ * 0.56
+        for sgn in (-1, 1):
+            ex = cx + sgn * hw_ * 0.21
+            cv.hline(ex - 2.6, ex + 2.6, ey - 3.6, fill=(70, 58, 44),
+                     width=1.1)
+            cv.ellipse(ex - 1.1, ey - 0.8, 2.2, 1.6, fill=(30, 26, 24))
+        # documents on the table in front of each leader
+        dx = cx - 13 + (i - 1) * 2
+        cv.rect(dx, ty - 1, 26, 7.5, fill=(244, 242, 234),
+                outline=(120, 100, 70), width=0.6)
+        cv.hline(dx + 3, dx + 23, ty + 1.8, fill=(170, 166, 156), width=0.8)
+        cv.hline(dx + 3, dx + 19, ty + 4.2, fill=(170, 166, 156), width=0.8)
+        # microphone, angled in from the side away from centre
+        mside = 1 if i < 2 else -1
+        mx0, my0 = cx + mside * w * 0.078, ty + 0.5
+        mx1, my1 = cx + mside * w * 0.046, ty - h * 0.135
+        cv.line([(mx0, my0), (mx1, my1)], fill=(14, 14, 17), width=1.3)
+        cv.ellipse(mx1 - 2.2, my1 - 1.6, 4.4, 3.2, fill=(14, 14, 17))
+        # name plate on the table front
         pw = cv.tw(names[i], nf) + 10
         cv.rect(cx - pw / 2, ty + h * 0.115, pw, 12.5, fill=(238, 230, 205))
-        cv.text(cx, ty + h * 0.115 + 2.2, names[i], nf, fill=INK, anchor="ma")
+        cv.text(cx, ty + h * 0.115 + 2.4, names[i], nf, fill=INK, anchor="ma")
 
 
 def art_court(cv, x, y, w, h):
-    """Courthouse with columns and a balance scale (F2)."""
+    """Courthouse with columns, a domed side tower and a balance scale
+    carrying the 9-6 vote (F2)."""
     cv.rect(x, y, w, h, fill=(178, 203, 224))
-    cv.rect(x, y + h * 0.80, w, h * 0.20, fill=(148, 168, 150))
-    bx, bw = x + w * 0.07, w * 0.52
-    by = y + h * 0.08
-    # pediment + roof
-    cv.poly([(bx - 6, by + 13), (bx + bw / 2, by - 6), (bx + bw + 6, by + 13)],
-            fill=(146, 58, 46))
-    cv.rect(bx - 6, by + 13, bw + 12, 4.4, fill=(120, 48, 38))
-    cv.ellipse(bx + bw / 2 - 4, by, 8, 8, fill=(240, 234, 220),
+    # clouds
+    for cxr, cyr, cs in [(0.10, 0.10, 1.0), (0.93, 0.07, 0.8)]:
+        ccx, ccy = x + w * cxr, y + h * cyr
+        cv.ellipse(ccx - 11 * cs, ccy - 3 * cs, 22 * cs, 6.5 * cs,
+                   fill=(238, 244, 248))
+        cv.ellipse(ccx - 6 * cs, ccy - 5.5 * cs, 13 * cs, 6 * cs,
+                   fill=(238, 244, 248))
+    cv.rect(x, y + h * 0.82, w, h * 0.18, fill=(148, 168, 150))
+    bx, bw = x + w * 0.04, w * 0.50
+    # left wing
+    cv.rect(bx - 10, y + h * 0.50, 10, h * 0.315, fill=(232, 228, 216),
+            outline=(150, 148, 140), width=0.7)
+    cv.rect(bx - 11.5, y + h * 0.475, 13, h * 0.03, fill=(120, 48, 38))
+    # pediment + roof band + emblem
+    cv.poly([(bx - 6, y + h * 0.30), (bx + bw / 2, y + h * 0.095),
+             (bx + bw + 6, y + h * 0.30)], fill=(146, 58, 46))
+    cv.rect(bx - 6, y + h * 0.30, bw + 12, h * 0.05, fill=(120, 48, 38))
+    cv.ellipse(bx + bw / 2 - 4.5, y + h * 0.175, 9, 9, fill=(240, 234, 220),
                outline=(120, 48, 38), width=0.8)
+    # entablature
+    cv.rect(bx, y + h * 0.35, bw, h * 0.05, fill=(226, 220, 205),
+            outline=(150, 148, 140), width=0.6)
     # columns
-    col_y = by + 17.5
-    col_h = h * 0.46
-    for i in range(5):
-        cx = bx + 8 + i * (bw - 16) / 4
-        cv.rect(cx - 4.5, col_y, 9, col_h, fill=(243, 240, 232),
+    col_y, col_h = y + h * 0.40, h * 0.365
+    for i in range(6):
+        cx = bx + 9 + i * (bw - 18) / 5
+        cv.rect(cx - 4.2, col_y, 8.4, col_h, fill=(243, 240, 232),
                 outline=(150, 148, 140), width=0.7)
-        cv.rect(cx - 6, col_y - 3, 12, 3.4, fill=(226, 220, 205))
-        cv.rect(cx - 6, col_y + col_h, 12, 3.4, fill=(226, 220, 205))
-    # steps
-    sy = col_y + col_h + 3.5
-    for i in range(2):
-        cv.rect(bx - 4 - i * 3, sy + i * 4.2, bw + 8 + i * 6, 3.6,
-                fill=(214, 208, 194), outline=(160, 156, 146), width=0.6)
-    # balance scale
-    sx = x + w * 0.80
-    top = y + h * 0.20
-    bot = y + h * 0.82
-    cv.vline(sx, top, bot, fill=(60, 54, 44), width=2.6)
-    cv.hline(sx - w * 0.155, sx + w * 0.155, top + 4, fill=(60, 54, 44),
-             width=2.6)
-    cv.ellipse(sx - 4, top - 6, 8, 8, fill=(198, 158, 44))
-    for sgn, drop in [(-1, 7), (1, 1.5)]:
-        px = sx + sgn * w * 0.155
-        py = top + 4 + drop
-        cv.line([(px, top + 4), (px - 11, py + 13)], fill=(60, 54, 44),
+        cv.rect(cx - 5.8, col_y - 3, 11.6, 3.4, fill=(226, 220, 205))
+        cv.rect(cx - 5.8, col_y + col_h, 11.6, 3.4, fill=(226, 220, 205))
+    # base band + three steps
+    cv.rect(bx - 2, col_y + col_h + 3.4, bw + 4, h * 0.04,
+            fill=(226, 220, 205), outline=(150, 148, 140), width=0.6)
+    sy = col_y + col_h + 3.4 + h * 0.04
+    for i in range(3):
+        cv.rect(bx - 4 - i * 3, sy + i * h * 0.042, bw + 8 + i * 6,
+                h * 0.038, fill=(214, 208, 194),
+                outline=(160, 156, 146), width=0.6)
+    # side tower with dome
+    tx, tw_ = bx + bw + 6, w * 0.075
+    cv.rect(tx, y + h * 0.315, tw_, h * 0.50, fill=(236, 232, 220),
+            outline=(150, 148, 140), width=0.7)
+    cv.d.pieslice([_u(tx - 2.5), _u(y + h * 0.155), _u(tx + tw_ + 2.5),
+                   _u(y + h * 0.475)], 180, 360, fill=(146, 58, 46))
+    cv.ellipse(tx + tw_ / 2 - 1.8, y + h * 0.135, 3.6, 3.6, fill=(120, 48, 38))
+    cv.rect(tx + tw_ * 0.32, y + h * 0.44, tw_ * 0.36, h * 0.13,
+            fill=(96, 84, 70))
+    cv.rect(tx + tw_ * 0.32, y + h * 0.63, tw_ * 0.36, h * 0.13,
+            fill=(96, 84, 70))
+    # bushes at the building's feet
+    for bxr in (0.015, 0.635):
+        cv.ellipse(x + w * bxr, y + h * 0.755, w * 0.045, h * 0.075,
+                   fill=(86, 128, 84))
+    # balance scale with the vote under its pans
+    sx = x + w * 0.83
+    top, bot = y + h * 0.16, y + h * 0.86
+    cv.vline(sx, top, bot, fill=(60, 54, 44), width=2.8)
+    cv.hline(sx - w * 0.115, sx + w * 0.115, top + h * 0.05,
+             fill=(60, 54, 44), width=2.8)
+    cv.ellipse(sx - 4.5, top - 7, 9, 9, fill=(198, 158, 44))
+    nf = F(SANS_B, 10.5)
+    for sgn, drop, num in [(-1, h * 0.09, "9"), (1, h * 0.03, "6")]:
+        px = sx + sgn * w * 0.115
+        py = top + h * 0.05 + drop
+        cv.line([(px, top + h * 0.05), (px - 11, py + 13)], fill=(60, 54, 44),
                 width=1.1)
-        cv.line([(px, top + 4), (px + 11, py + 13)], fill=(60, 54, 44),
+        cv.line([(px, top + h * 0.05), (px + 11, py + 13)], fill=(60, 54, 44),
                 width=1.1)
         cv.arc(px - 13, py + 6, 26, 15, 0, 180, fill=(60, 54, 44), width=2)
         cv.hline(px - 13, px + 13, py + 13.5, fill=(60, 54, 44), width=1.6)
-    cv.rect(sx - 13, bot - 2, 26, 4.5, fill=(60, 54, 44))
+        cv.text(px, py + 19, num, nf, fill=(60, 54, 44), anchor="ma")
+    cv.rect(sx - 14, bot - 2, 28, 5, fill=(60, 54, 44))
 
 
 def art_cop(cv, x, y, w, h):
@@ -386,7 +449,7 @@ def art_cop(cv, x, y, w, h):
     cv.rect(x, y, w, h, fill=(38, 104, 96))
     cv.rect(x, y + h * 0.78, w, h * 0.22, fill=(30, 84, 78))
     # globe
-    gx, gy, gr = x + w * 0.17, y + h * 0.52, h * 0.335
+    gx, gy, gr = x + w * 0.17, y + h * 0.50, h * 0.36
     cv.ellipse(gx - gr, gy - gr, 2 * gr, 2 * gr, fill=(58, 116, 165))
     land = (92, 158, 96)
     cv.poly([(gx - gr * 0.55, gy - gr * 0.62), (gx - gr * 0.18, gy - gr * 0.78),
@@ -405,7 +468,7 @@ def art_cop(cv, x, y, w, h):
                width=1.2)
     # thermometer
     tx = x + w * 0.415
-    tube_t, tube_b = y + h * 0.18, y + h * 0.72
+    tube_t, tube_b = y + h * 0.14, y + h * 0.74
     cv.rect(tx - 4.5, tube_t, 9, tube_b - tube_t, fill=(238, 240, 238),
             outline=(30, 50, 55), width=0.8)
     cv.rect(tx - 4.5, tube_t + (tube_b - tube_t) * 0.38, 9,
@@ -416,39 +479,38 @@ def art_cop(cv, x, y, w, h):
         tyy = tube_t + 4 + i * (tube_b - tube_t - 10) / 3
         cv.hline(tx + 6.5, tx + 11.5, tyy, fill=(230, 236, 234), width=1)
     # document
-    dx, dy, dw, dh = x + w * 0.535, y + h * 0.10, w * 0.43, h * 0.76
+    dx, dy, dw, dh = x + w * 0.535, y + h * 0.07, w * 0.43, h * 0.84
     cv.rect(dx + 3, dy + 3, dw, dh, fill=(20, 60, 56))
     cv.rect(dx, dy, dw, dh, fill=(250, 248, 240), outline=(120, 118, 108),
             width=0.8)
-    tf = F(SANS_B, 12.5)
-    cv.text(dx + dw * 0.08, dy + dh * 0.11, "REVISED TEXT · 19 NOV",
+    tf = F(SANS_B, 13)
+    cv.text(dx + dw * 0.08, dy + dh * 0.09, "REVISED TEXT · 19 NOV",
             F(SANS_B, 7), fill=INK_SOFT)
     txx = dx + dw * 0.08
-    tyy = dy + dh * 0.34
+    tyy = dy + dh * 0.26
     cv.text(txx, tyy, "FOSSIL FUELS", tf, fill=INK)
     twd = cv.tw("FOSSIL FUELS", tf)
     cv.line([(txx - 2, tyy + 8.5), (txx + twd + 2, tyy + 5.5)], fill=RED,
             width=2.4)
     for i in range(2):
-        gy = dy + dh * (0.60 + i * 0.15)
+        gy = dy + dh * (0.47 + i * 0.11)
         cv.hline(dx + dw * 0.08, dx + dw * 0.86, gy, fill=(178, 174, 162),
                  width=1.6)
-    cv.text(dx + dw * 0.08, dy + dh * 0.80, "$120BN ADAPTATION AID",
-            F(SANS_B, 7.2), fill=INK_SOFT)
+    cv.text(dx + dw * 0.08, dy + dh * 0.70, "$120BN ADAPTATION AID",
+            F(SANS_B, 7.4), fill=INK_SOFT)
 
 
 MEDIUMS = [
     {"n": 4, "kicker": "NEW YORK · MARKETS", "tag": "CONFIRMED",
      "label": "ANT · NASDAQ", "art": "chart",
      "headline": "Anthropic starts trading on Nasdaq",
-     "brief": ("Its record $81.3bn share sale was priced at $83 on "
-               "Wednesday; shares opened at $111.50, passing SpaceX’s "
-               "$75bn record. — AP")},
+     "brief": ("Priced at $83 on Wednesday, its record $81.3bn sale "
+               "opened at $111.50 — passing SpaceX’s $75bn record. — AP")},
     {"n": 5, "kicker": "WORLDWIDE · GAMES", "tag": "CONFIRMED",
      "label": "GTA VI", "art": "gta",
      "headline": "GTA VI goes on sale after 13 years",
-     "brief": ("The midnight launch draws rave reviews; analysts estimate "
-               "17.1m pre-orders worth about $1.65bn, on PS5 and Xbox "
+     "brief": ("Midnight launch draws rave reviews; analysts put "
+               "pre-orders at 17.1m worth $1.65bn, PS5 and Xbox "
                "only. — ABC")},
     {"n": 6, "kicker": "CRIMEA · WAR", "tag": "CONFIRMED",
      "label": "KERCH BRIDGE", "art": "bridge",
@@ -474,8 +536,8 @@ MEDIUMS = [
     {"n": 10, "kicker": "GREENLAND · SECURITY", "tag": "CONFIRMED",
      "label": "GREENLAND · 109–0", "art": "greenland",
      "headline": "Denmark backs Arctic pact with US",
-     "brief": ("Parliament approves the Greenland security deal 109–0, "
-               "expanding the US presence under Danish sovereignty. — AP")},
+     "brief": ("Parliament approves Greenland deal 109–0, expanding "
+               "the US presence under Danish sovereignty. — AP")},
     {"n": 11, "kicker": "CANBERRA · ECONOMY", "tag": "CONFIRMED",
      "label": "JOBLESS RATE", "art": "bars",
      "headline": "Australia’s jobless rate jumps to 4.9%",
@@ -505,11 +567,13 @@ def _burst(cv, cx, cy, r, color=(250, 214, 90)):
 def art_chart(cv, x, y, w, h):
     cv.rect(x, y, w, h, fill=(22, 62, 46))
     cv.text(x + 8, y + h * 0.16, "ANT", F(SANS_B, 15), fill=WHITE)
+    cv.text(x + w * 0.97, y + h * 0.07, "$111.50", F(SANS_B, 8.5),
+            fill=(180, 245, 195), anchor="ra")
     pts = [(0.34, 0.78), (0.48, 0.62), (0.60, 0.68), (0.72, 0.44),
-           (0.84, 0.50), (0.965, 0.20)]
+           (0.84, 0.50), (0.965, 0.26)]
     cv.line([(x + w * a, y + h * b) for a, b in pts], fill=(120, 230, 150),
             width=2)
-    ex, ey = x + w * 0.965, y + h * 0.20
+    ex, ey = x + w * 0.965, y + h * 0.26
     cv.poly([(ex, ey), (ex - 7, ey + 1), (ex - 1, ey + 6)], fill=(120, 230, 150))
     for i, bh in enumerate([0.30, 0.42, 0.38, 0.55, 0.50, 0.72]):
         bx = x + w * (0.36 + i * 0.105)
@@ -533,10 +597,13 @@ def art_gta(cv, x, y, w, h):
         tx, ty = bx + 2, by - h * ph
         for a in (-160, -115, -70, -25, 15):
             rad = math.radians(a)
-            cv.line([(tx, ty), (tx + 11 * math.cos(rad), ty + 6 * math.sin(rad))],
+            cv.line([(tx, ty), (tx + 15 * math.cos(rad), ty + 8 * math.sin(rad))],
                     fill=(24, 14, 34), width=1.6)
     cv.text(x + w * 0.97, y + h * 0.10, "VI", F(SERIF_B, 19), fill=WHITE,
             anchor="ra")
+    # the pre-order figure, printed in the art like the leaders do
+    cv.rect(x + 5, y + 4, 92, 13, fill=(24, 16, 40))
+    cv.text(x + 10, y + 6.2, "17.1M PRE-ORDERS", F(SANS_B, 7.6), fill=WHITE)
 
 
 def art_bridge(cv, x, y, w, h):
@@ -549,7 +616,14 @@ def art_bridge(cv, x, y, w, h):
         cv.vline(px, dy - h * 0.16, dy, fill=(40, 44, 52), width=1)
     cv.arc(x + w * 0.08, dy - h * 0.30, w * 0.84, h * 0.34, 180, 360,
            fill=(40, 44, 52), width=1.4)
-    _burst(cv, x + w * 0.52, dy - h * 0.10, 7, color=(255, 150, 50))
+    # a train halted on the deck
+    for tx, tw_ in [(0.05, 13), (0.125, 11), (0.195, 11)]:
+        cv.rect(x + w * tx, dy - 5.5, tw_, 5.5, fill=(40, 44, 52))
+    # smoke over the burst
+    cv.ellipse(x + w * 0.44, dy - h * 0.42, 15, 5.5, fill=(128, 128, 132))
+    cv.ellipse(x + w * 0.485, dy - h * 0.50, 19, 6.5, fill=(150, 150, 154))
+    _burst(cv, x + w * 0.52, dy - h * 0.10, 10, color=(255, 150, 50))
+    _burst(cv, x + w * 0.30, dy - h * 0.16, 6, color=(255, 170, 70))
     for i in range(4):
         cv.hline(x + w * (0.08 + i * 0.22), x + w * (0.18 + i * 0.22),
                  y + h * (0.72 + (i % 2) * 0.12), fill=(170, 205, 230),
@@ -564,32 +638,51 @@ def art_riyadh(cv, x, y, w, h):
         bx = x + w * (0.03 + i * 0.135)
         cv.rect(bx, y + h * (1 - bh), w * bw_, h * bh, fill=(6, 8, 18))
         for wy in (0.18, 0.38):
-            cv.rect(bx + w * bw_ * 0.3, y + h * (1 - bh + wy), 1.8, 1.8,
+            cv.rect(bx + w * bw_ * 0.3, y + h * (1 - bh + wy), 2.4, 2.4,
                     fill=(250, 214, 90))
-    _burst(cv, x + w * 0.30, y + h * 0.26, 6.5)
-    _burst(cv, x + w * 0.58, y + h * 0.16, 5)
-    _burst(cv, x + w * 0.82, y + h * 0.32, 6)
+    # interceptor trails rising from the skyline to the bursts
+    for (ax, ay), (bx2, by2) in [((0.34, 0.28), (0.26, 0.62)),
+                                 ((0.58, 0.16), (0.52, 0.55)),
+                                 ((0.78, 0.38), (0.72, 0.66))]:
+        cv.line([(x + w * bx2, y + h * by2), (x + w * ax, y + h * ay)],
+                fill=(170, 185, 220), width=1.2)
+    _burst(cv, x + w * 0.34, y + h * 0.28, 9)
+    _burst(cv, x + w * 0.58, y + h * 0.16, 7)
+    _burst(cv, x + w * 0.78, y + h * 0.38, 9)
+    # the 04:42 siren time, as a chip in the art
+    cv.rect(x + 6, y + 5, 44, 12.5, fill=(10, 14, 30),
+            outline=(90, 100, 130), width=0.7)
+    cv.text(x + 28, y + 7.0, "04:42", F(SANS_B, 8.5), fill=WHITE,
+            anchor="ma")
 
 
 def art_cyclone(cv, x, y, w, h):
     cv.rect(x, y, w, h, fill=(58, 88, 104))
     cx, cy = x + w * 0.60, y + h * 0.52
-    for r, a0 in [(13, 20), (9.5, 140), (6, 260)]:
+    for r, a0 in [(21, 20), (15.5, 140), (10, 260)]:
         cv.arc(cx - r, cy - r * 0.78, 2 * r, 2 * r * 0.78, a0, a0 + 235,
-               fill=(235, 242, 244), width=2)
-    cv.ellipse(cx - 2.4, cy - 2.4, 4.8, 4.8, fill=(235, 242, 244))
+               fill=(235, 242, 244), width=2.6)
+    cv.ellipse(cx - 3.5, cy - 3.5, 7, 7, fill=(235, 242, 244))
     cv.poly([(x, y + h), (x, y + h * 0.52), (x + w * 0.20, y + h * 0.40),
              (x + w * 0.30, y + h * 0.66), (x + w * 0.26, y + h)],
             fill=(206, 182, 138))
-    cv.text(x + w * 0.055, y + h * 0.60, "ODISHA", F(SANS_B, 6),
+    cv.text(x + w * 0.055, y + h * 0.60, "ODISHA", F(SANS_B, 6.5),
             fill=(90, 74, 44))
+    ef = F(SANS_B, 6.4)
+    etxt = "204,070 TO EVACUATE"
+    etw = cv.tw(etxt, ef)
+    cv.rect(x + w - 5 - etw - 8, y + h - 12.5, etw + 8, 11, fill=(40, 62, 76))
+    cv.text(x + w - 5, y + h - 10.5, etxt, ef, fill=WHITE, anchor="ra")
 
 
 def art_seoul(cv, x, y, w, h):
     cv.rect(x, y, w, h, fill=(233, 227, 209))
-    bx, by, bw = x + w * 0.07, y + h * 0.14, w * 0.34
+    bx, by, bw = x + w * 0.07, y + h * 0.22, w * 0.34
     cv.poly([(bx - 3, by + 8), (bx + bw / 2, by - 3), (bx + bw + 3, by + 8)],
             fill=(146, 58, 46))
+    # a small flag on the pediment apex
+    cv.vline(bx + bw / 2, by - 9, by - 2, fill=(70, 66, 60), width=1.1)
+    cv.rect(bx + bw / 2, by - 9, 8, 5, fill=(198, 40, 48))
     for i in range(3):
         cx = bx + 4 + i * (bw - 8) / 2
         cv.rect(cx - 2.4, by + 10, 4.8, h * 0.52, fill=(248, 246, 238),
@@ -600,20 +693,20 @@ def art_seoul(cv, x, y, w, h):
 def art_greenland(cv, x, y, w, h):
     cv.rect(x, y, w, h, fill=(203, 226, 238))
     gx, gy = x + w * 0.44, y + h * 0.50
-    cv.poly([(gx - 16, gy + 8), (gx - 12, gy - 6), (gx - 4, gy - 13),
-             (gx + 7, gy - 12), (gx + 14, gy - 5), (gx + 12, gy + 5),
-             (gx + 4, gy + 13), (gx - 6, gy + 12)], fill=(248, 250, 252),
+    cv.poly([(gx - 27, gy + 13), (gx - 20, gy - 10), (gx - 7, gy - 22),
+             (gx + 12, gy - 20), (gx + 23, gy - 8), (gx + 20, gy + 8),
+             (gx + 7, gy + 22), (gx - 10, gy + 20)], fill=(248, 250, 252),
             outline=(150, 175, 195), width=0.8)
     # Danish flag
-    fx, fy = x + w * 0.10, y + h * 0.16
-    cv.vline(fx, fy, fy + h * 0.62, fill=(70, 70, 70), width=1.2)
-    cv.rect(fx + 1, fy, 17, 11.5, fill=(198, 40, 48))
-    cv.rect(fx + 6, fy, 3, 11.5, fill=WHITE)
-    cv.rect(fx + 1, fy + 4.6, 17, 2.6, fill=WHITE)
+    fx, fy = x + w * 0.10, y + h * 0.12
+    cv.vline(fx, fy, fy + h * 0.68, fill=(70, 70, 70), width=1.2)
+    cv.rect(fx + 1, fy, 23, 15.5, fill=(198, 40, 48))
+    cv.rect(fx + 7.5, fy, 4, 15.5, fill=WHITE)
+    cv.rect(fx + 1, fy + 6.2, 23, 3.4, fill=WHITE)
     # US flag (simplified)
-    fx2 = x + w * 0.80
-    cv.vline(fx2, fy, fy + h * 0.62, fill=(70, 70, 70), width=1.2)
-    _flag_us(cv, fx2 + 1, fy, 17, 11.5)
+    fx2 = x + w * 0.79
+    cv.vline(fx2, fy, fy + h * 0.68, fill=(70, 70, 70), width=1.2)
+    _flag_us(cv, fx2 + 1, fy, 23, 15.5)
 
 
 def art_bars(cv, x, y, w, h):
@@ -633,16 +726,28 @@ def art_bars(cv, x, y, w, h):
 def art_runner(cv, x, y, w, h):
     cv.rect(x, y, w, h, fill=(231, 222, 204))
     cv.hline(x, x + w, y + h * 0.86, fill=(170, 158, 128), width=1.6)
-    cx, cy = x + w * 0.34, y + h * 0.30
     ink = (38, 36, 34)
-    cv.ellipse(cx - 3.4, cy - 8, 6.8, 6.8, fill=ink)
-    cv.line([(cx, cy), (cx + 5, cy + 9)], fill=ink, width=2.6)          # torso
-    cv.line([(cx + 5, cy + 9), (cx + 13, cy + 12)], fill=ink, width=2.4)  # thigh
-    cv.line([(cx + 13, cy + 12), (cx + 11, cy + 20)], fill=ink, width=2.4)  # shin
-    cv.line([(cx + 5, cy + 9), (cx - 3, cy + 15)], fill=ink, width=2.4)  # thigh b
-    cv.line([(cx - 3, cy + 15), (cx + 4, cy + 21)], fill=ink, width=2.4)  # shin b
-    cv.line([(cx + 1, cy + 2), (cx + 9, cy + 7)], fill=ink, width=2.2)   # arm
-    cv.line([(cx + 1, cy + 2), (cx - 6, cy + 8)], fill=ink, width=2.2)   # arm b
+    hx, hy = x + w * 0.33, y + h * 0.20          # head centre
+    neck = (x + w * 0.35, y + h * 0.31)
+    hip = (x + w * 0.385, y + h * 0.52)
+    cv.ellipse(hx - 5.7, hy - 5.7, 11.4, 11.4, fill=ink)
+    cv.line([neck, hip], fill=ink, width=3.2)                       # torso
+    cv.line([hip, (x + w * 0.50, y + h * 0.62)], fill=ink, width=3.0)
+    cv.line([(x + w * 0.50, y + h * 0.62), (x + w * 0.47, y + h * 0.85)],
+            fill=ink, width=3.0)                                    # front leg
+    cv.line([hip, (x + w * 0.27, y + h * 0.66)], fill=ink, width=3.0)
+    cv.line([(x + w * 0.27, y + h * 0.66), (x + w * 0.36, y + h * 0.855)],
+            fill=ink, width=3.0)                                    # back leg
+    sh = (x + w * 0.355, y + h * 0.35)
+    cv.line([sh, (x + w * 0.45, y + h * 0.48)], fill=ink, width=2.8)
+    cv.line([(x + w * 0.45, y + h * 0.48), (x + w * 0.40, y + h * 0.59)],
+            fill=ink, width=2.8)                                    # front arm
+    cv.line([sh, (x + w * 0.26, y + h * 0.47)], fill=ink, width=2.8)
+    cv.line([(x + w * 0.26, y + h * 0.47), (x + w * 0.33, y + h * 0.58)],
+            fill=ink, width=2.8)                                    # back arm
+    # race bib on the torso
+    cv.rect(x + w * 0.345, y + h * 0.375, 8, 6.5, fill=(250, 248, 240),
+            outline=ink, width=0.7)
 
 
 def art_crowd(cv, x, y, w, h):
@@ -654,16 +759,16 @@ def art_crowd(cv, x, y, w, h):
         cv.rect(px, y + h * 0.14, w * 0.30, h * 0.30, fill=col)
         cv.text(px + w * 0.15, y + h * 0.20, txt, F(SANS_B, 7), fill=WHITE,
                 anchor="ma")
-    # crowd heads
+    # crowd heads, three rows deep
     cols = [(198, 90, 60), (60, 90, 160), (90, 140, 90), (200, 160, 60),
             (150, 80, 140)]
-    for row in range(2):
+    for row in range(3):
         for i in range(9):
             hx = x + w * (0.06 + i * 0.105) + (row * 4)
-            hy = y + h * (0.66 + row * 0.17)
-            cv.ellipse(hx - 3.4, hy - 3.4, 6.8, 6.8,
+            hy = y + h * (0.58 + row * 0.135)
+            cv.ellipse(hx - 3.7, hy - 3.7, 7.4, 7.4,
                        fill=cols[(i + row) % len(cols)])
-            cv.rect(hx - 4.4, hy + 3.2, 8.8, 3.6,
+            cv.rect(hx - 4.6, hy + 3.5, 9.2, 3.4,
                     fill=cols[(i + row + 2) % len(cols)])
 
 
@@ -697,13 +802,8 @@ BRIEFS = [
     (31, "CANARIES", "A record 11,000 migrants arrive in the Canaries in 15 days.", "Africanews"),
     (32, "FLORIDA", "Floods shut schools in Broward and Miami for a second day.", "CBS"),
     (33, "WELLINGTON", "A court rules that pay-equity cuts broke the rights law.", "RNZ"),
-    (34, "TONGA", "A drought emergency takes effect across the islands.", "RNZ"),
-    (35, "COOK ISLANDS", "Cyclone Xavier weakens to category 4.", "RNZ"),
-    (36, "ROME", "Author Corrado Augias dies at 91.", "Euronews"),
-    (37, "ZURICH", "Two rivals step up to challenge FIFA president Infantino.", "ABC"),
-    (38, "SPACE", "Astronomers watch a red giant star eating a Sun-sized star.", "Nature"),
-    (39, "TAIWAN", "TSMC tightens its curbs on AI chip sales to China.", "Reuters"),
-    (40, "GAZA", "Israel says its tank raid past the truce line has ended.", "BBC"),
+    (34, "TAIWAN", "TSMC tightens its curbs on AI chip sales to China.", "Reuters"),
+    (35, "GAZA", "Israel says its tank raid past the truce line has ended.", "BBC"),
 ]
 
 # Coarse continent outlines in (lon, lat) for the dotted map.
@@ -897,7 +997,8 @@ def draw_masthead(cv, img):
     cv.hline(MARGIN, RIGHT, 30, fill=INK, width=2.6)
     cv.hline(MARGIN, RIGHT, 34, fill=INK, width=0.8)
     cv.text(MARGIN, 40, "Thursday 19 November 2026", F(SERIF_B, 45), fill=INK)
-    cv.text(RIGHT, 44, "40 STORIES", F(SERIF_B, 19), fill=INK, anchor="ra")
+    cv.text(RIGHT, 44, f"{TOTAL_STORIES} STORIES", F(SERIF_B, 19), fill=INK,
+            anchor="ra")
     cv.text(RIGHT, 68, "EVERY CONTINENT", F(SANS_B, 8.5), fill=INK_SOFT,
             anchor="ra")
     cv.text(RIGHT, 79, "ALL FROM THIS ONE DAY", F(SANS_B, 8.5),
@@ -912,32 +1013,20 @@ def draw_masthead(cv, img):
 def draw_region_bar(cv, y=115, h=18):
     total = sum(c for _, c, _ in REGIONS)
     x = MARGIN
-    f = F(SANS_B, 8.8)
     for name, count, color in REGIONS:
         w = CW * count / total
-        cv.rect(x, y, w, h, fill=color)
         label = f"{name} {count}"
+        f = F(SANS_B, 8.8)
+        for sz in (8.8, 7.4, 6.6, 6.0):
+            f = F(SANS_B, sz)
+            if cv.tw(label, f) <= w - 4:
+                break
+        cv.rect(x, y, w, h, fill=color)
         cv.text(x + w / 2, y + h / 2 - 4.6, label, f, fill=WHITE, anchor="ma")
         x += w
 
 
-def draw_utc(cv, y=136):
-    cv.text(MARGIN, y + 1, "THE DAY", F(SERIF_B, 12), fill=RED)
-    cv.text(MARGIN, y + 15, "IN UTC", F(SERIF_B, 12), fill=RED)
-    x0 = 104
-    colw = (RIGHT - x0) / len(UTC_ITEMS)
-    for i, (time, place, event) in enumerate(UTC_ITEMS):
-        x = x0 + i * colw
-        if i:
-            cv.vline(x - 7, y + 2, y + 26, fill=HAIR, width=0.8)
-        cv.text(x, y, time, F(SANS_B, 10.5), fill=INK)
-        tw_ = cv.tw(time, F(SANS_B, 10.5))
-        cv.text(x + tw_ + 5, y + 2.2, place, F(SANS_B, 8.3), fill=RED)
-        cv.text(x, y + 15, event, F(SANS, 9.3), fill=INK_SOFT)
-    cv.hline(MARGIN, RIGHT, y + 31, fill=HAIR, width=0.8)
-
-
-def draw_numbers(cv, y=171):
+def draw_numbers(cv, y=139):
     colw = CW / len(NUMBERS)
     for i, (num, label) in enumerate(NUMBERS):
         x = MARGIN + i * colw
@@ -947,14 +1036,16 @@ def draw_numbers(cv, y=171):
 
 
 def draw_feature(cv, img, f, x, y):
-    w, art_h = 318, 88
+    w, art_h = 318, 120
     foot = 13 if f["artfoot"] else 0
     ART_FNS[f["art"]](cv, x, y + 17, w, art_h - 17 - foot)
     if f["art"] == "cop":
-        scene_h = art_h - 30
-        sdx = x + w * 0.535 + w * 0.43 * 0.94
-        sdy = y + 17 + scene_h * 0.10 + scene_h * 0.76 * 0.92
-        stamp(img, sdx, sdy, "CUT", size=10)
+        # the CUT stamp sits fully inside the draft document's blank
+        # lower area (document: dx 0.535w, dy 0.07, dh 0.84 of the scene)
+        scene_h = art_h - 17 - foot
+        sdx = x + w * 0.84
+        sdy = y + 17 + scene_h * (0.07 + 0.84 * 0.92)
+        stamp(img, sdx, sdy, "CUT", size=9)
     if f["artfoot"]:
         cv.rect(x, y + art_h - 13, w, 13, fill=(24, 26, 30))
         cv.text(x + w / 2, y + art_h - 13 + 2.4, f["artfoot"],
@@ -962,42 +1053,42 @@ def draw_feature(cv, img, f, x, y):
     cv.rect(x, y, w, 17, fill=INK)
     cv.text(x + 7, y + 3.4, f["banner"], F(SANS_B, 8.8), fill=WHITE)
     cv.rect(x, y, w, art_h, outline=INK, width=1.2)
-    ky = y + art_h + 5
+    ky = y + art_h + 4
     number_circle(cv, x, ky, 13.5, f["n"])
     cv.text(x + 19, ky + 1.2, f["kicker"], F(SANS_B, 10), fill=RED)
     chip(cv, x + w, ky + 0.25, f["tag"], h=13)
-    hy = ky + 17
+    hy = ky + 16
     hf = F(SERIF_B, 18.5)
     lines = cv.wrap(f["headline"], hf, w)
     for i, ln in enumerate(lines):
-        cv.text(x, hy + i * 20.5, ln, hf, fill=INK)
-    dy = hy + len(lines) * 20.5 + 4
+        cv.text(x, hy + i * 20.0, ln, hf, fill=INK)
+    dy = hy + len(lines) * 20.0 + 4
     df = F(SANS, 10.6)
     dlines = cv.wrap(f["dek"], df, w)
     for i, ln in enumerate(dlines):
-        cv.text(x, dy + i * 13, ln, df, fill=INK)
-    sy = dy + len(dlines) * 13 + 3
+        cv.text(x, dy + i * 12.2, ln, df, fill=INK)
+    sy = dy + len(dlines) * 12.2 + 3
     cv.text(x, sy, f["source"], F(SANS_O, 9.5), fill=RED_DARK)
-    return sy + 12
+    return sy + 10
 
 
 def draw_medium(cv, img, m, x, ry):
-    w, art_h = 188, 30
+    w, art_h = 188, 50
     ART_FNS[m["art"]](cv, x, ry, w, art_h)
     if m["art"] == "seoul":
-        stamp(img, x + w * 0.74, ry + 15, "OVERTURNED", size=8.4)
+        stamp(img, x + w * 0.74, ry + art_h / 2, "OVERTURNED", size=8.4)
     if m["art"] == "runner":
-        stamp(img, x + w * 0.72, ry + 14.5, "BANNED", size=9)
+        stamp(img, x + w * 0.72, ry + art_h / 2, "BANNED", size=9)
     lf = F(SANS_B, 7.3)
     lw = cv.tw(m["label"], lf) + 8
     cv.rect(x, ry + art_h - 11, lw, 11, fill=(24, 26, 30))
     cv.text(x + 4, ry + art_h - 11 + 1.9, m["label"], lf, fill=WHITE)
     cv.rect(x, ry, w, art_h, outline=INK, width=1)
-    ky = ry + art_h + 5
+    ky = ry + art_h + 4
     number_circle(cv, x, ky, 11.5, m["n"])
     cv.text(x + 15.5, ky + 1, m["kicker"], F(SANS_B, 8.3), fill=RED)
     chip(cv, x + w, ky + 0.25, m["tag"], h=11)
-    hy = ky + 15.5
+    hy = ky + 14.5
     hf = F(SERIF_B, 12.6)
     lines = cv.wrap(m["headline"], hf, w)
     for i, ln in enumerate(lines):
@@ -1006,11 +1097,11 @@ def draw_medium(cv, img, m, x, ry):
     bf = F(SANS, 9.6)
     blines = cv.wrap(m["brief"], bf, w)
     for i, ln in enumerate(blines):
-        cv.text(x, by + i * 10.4, ln, bf, fill=INK)
+        cv.text(x, by + i * 10.2, ln, bf, fill=INK)
 
 
 def draw_bottom(cv, img):
-    hy = 708
+    hy = 706
     cv.text(MARGIN, hy, "WHERE IT HAPPENED", F(SERIF_B, 12.5), fill=INK)
     note_x = MARGIN + cv.tw("WHERE IT HAPPENED", F(SERIF_B, 12.5)) + 8
     cv.text(note_x, hy + 3, "positions approximate", F(SANS, 7.5),
@@ -1019,30 +1110,30 @@ def draw_bottom(cv, img):
             fill=INK)
     cv.text(RIGHT, hy + 3.5, "place · what happened · source", F(SANS, 8.3),
             fill=INK_SOFT, anchor="ra")
-    draw_map(cv, MARGIN, 730, 244, 148)
+    draw_map(cv, MARGIN, 728, 244, 148)
     # HOW SURE legend, under the map
-    cv.text(MARGIN, 884, "HOW SURE ARE WE?", F(SANS_B, 9), fill=RED)
+    cv.text(MARGIN, 882, "HOW SURE ARE WE?", F(SANS_B, 9), fill=RED)
     legend = [("CONFIRMED", "— confirmed by named sources"),
               ("CLAIM", "— one side says so, unverified"),
               ("FORECAST", "— poll, draft or schedule")]
     for i, (word, rest) in enumerate(legend):
-        yy = 898 + i * 11.5
+        yy = 895 + i * 11
         cv.text(MARGIN, yy, word, F(SANS_B, 8.6), fill=INK)
         cv.text(MARGIN + cv.tw(word, F(SANS_B, 8.6)) + 4, yy, rest,
                 F(SANS, 8.6), fill=INK_SOFT)
     # Briefs: auto-fit the largest size whose two in-order columns fit.
     col_x = [278, 646]
     col_w = 352
-    top, avail = 730, 218
+    top, avail = 728, 222
     chosen = None
     for size in (9.2, 9.0, 8.8, 8.6, 8.4):
         lh = size * 1.10
-        gap = 1.5
+        gap = 1.2
         wrapped = [(b, rich_wrap(cv, brief_spans(*b, size), col_w))
                    for b in BRIEFS]
         heights = [len(lines) * lh + gap for _, lines in wrapped]
         best = None
-        for s in range(8, 20):
+        for s in range(6, len(BRIEFS) - 5):
             m = max(sum(heights[:s]), sum(heights[s:]))
             if best is None or m < best[0]:
                 best = (m, s)
@@ -1090,16 +1181,14 @@ def main():
     cv = CV(img)
     draw_masthead(cv, img)
     draw_region_bar(cv)
-    draw_utc(cv)
     draw_numbers(cv)
     fx = [MARGIN, 353, 684]
-    for f, x in zip(FEATURES, fx):
-        draw_feature(cv, img, f, x, 215)
-    cv.hline(MARGIN, RIGHT, 443, fill=HAIR, width=0.8)
+    ends = [draw_feature(cv, img, f, x, 182) for f, x in zip(FEATURES, fx)]
+    cv.hline(MARGIN, RIGHT, 433, fill=HAIR, width=0.8)
     mx = [MARGIN + i * 198 for i in range(5)]
     for i, m in enumerate(MEDIUMS):
-        draw_medium(cv, img, m, mx[i % 5], 449 if i < 5 else 573)
-    cv.hline(MARGIN, RIGHT, 702, fill=HAIR, width=0.8)
+        draw_medium(cv, img, m, mx[i % 5], 439 if i < 5 else 571)
+    cv.hline(MARGIN, RIGHT, 703, fill=HAIR, width=0.8)
     draw_bottom(cv, img)
     draw_date_check(cv)
     draw_footer(cv)

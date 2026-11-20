@@ -1,11 +1,11 @@
 # The World in One Day — Thursday 19 November 2026
 
 A one-page broadsheet that sums up the world news of **Thursday 19 November
-2026** in a single 1024×1024 image: 40 dated stories — three wide features
+2026** in a single 1024×1024 image: 35 dated stories — three wide features
 (the first Trump–Xi–Putin summit in Shenzhen, the World Court's Myanmar
 genocide verdict, and the COP31 draft deal), ten illustrated medium stories,
-a UTC timeline, the day in numbers, a dotted world map with numbered pins,
-and 27 further one-sentence briefs, each attributed to its source.
+the day in numbers, a dotted world map with numbered pins, and 22 further
+one-sentence briefs, each attributed to its source.
 
 This is an entry for make.fun's **news-image-20261119** bounty,
 "Sum up 19 November's world news in one image".
